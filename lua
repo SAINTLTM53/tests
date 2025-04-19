@@ -91,21 +91,46 @@ function runFarm()
     local WoodenDoorCFrame = CFrame.new(-590.787598, 254.334854, -679.249634)
 
     local HardMoneyCFrames = {
-        CFrame.new(-598.759521, 252.007339, -711.958496),
-        CFrame.new(-607.092285, 253.089981, -701.857544),
-        CFrame.new(-598.39502, 252.392899, -711.153625),
-        CFrame.new(-607.836914, 253.089981, -702.305664),
-        CFrame.new(-598.257446, 252.007339, -710.849792),
-        CFrame.new(-610.890747, 253.170853, -703.304565),
-    }
+                    CFrame.new(-598.759521, 252.007339, -711.958496),
+                    CFrame.new(-607.092285, 253.089981, -701.857544),
+                    CFrame.new(-598.39502, 252.392899, -711.153625),
+                    CFrame.new(-607.836914, 253.089981, -702.305664),
+                    CFrame.new(-598.257446, 252.007339, -710.849792),
+                    CFrame.new(-598.767456, 252.131973, -711.97583),
+                    CFrame.new(-598.401245, 252.131973, -711.167175),
+                    CFrame.new(-598.437256, 252.274185, -711.246765),
+                    CFrame.new(-598.757446, 252.274185, -711.953796),
+                    CFrame.new(-598.757446, 252.397659, -711.953796),
+                    CFrame.new(-598.757446, 252.537674, -711.953796),
+                    CFrame.new(-598.757446, 252.676651, -711.953796),
+                    CFrame.new(-598.757446, 252.810562, -711.953796),
+                    CFrame.new(-598.54248, 252.007339, -711.479187),
+                    CFrame.new(-598.39502, 252.546158, -711.153625),
+                    CFrame.new(-598.39502, 252.704727, -711.153625),
+                    CFrame.new(-598.39502, 252.830399, -711.153625),
+                    CFrame.new(-598.39502, 252.96846, -711.153625),
+                    CFrame.new(-610.890747, 253.170853, -703.304565),
+                    CFrame.new(-610.810791, 253.050858, -703.322083),
+                    CFrame.new(-608.896362, 253.209976, -702.94342),
+                    CFrame.new(-608.890869, 253.089981, -703.01123),
+                    CFrame.new(-607.801392, 253.209976, -702.209412),
+                }
 
-    local WoodenMoneyCFrames = {
-        CFrame.new(-601.734985, 253.181381, -684.773926),
-        CFrame.new(-598.345337, 253.334213, -684.057373),
-        CFrame.new(-600.543457, 253.061386, -684.503174),
-        CFrame.new(-601.755981, 253.061386, -683.188782),
-        CFrame.new(-603.292969, 253.10051, -682.698669),
-    }
+                local WoodenMoneyCFrames = {
+                    CFrame.new(-601.734985, 253.181381, -684.773926),
+                    CFrame.new(-598.345337, 253.334213, -684.057373),
+                    CFrame.new(-600.543457, 253.061386, -684.503174),
+                    CFrame.new(-598.345337, 253.200363, -684.100647),
+                    CFrame.new(-601.755981, 253.061386, -683.188782),
+                    CFrame.new(-601.649414, 253.061386, -684.90033),
+                    CFrame.new(-600.591797, 253.334213, -684.503174),
+                    CFrame.new(-600.548462, 253.200363, -684.503174),
+                    CFrame.new(-603.292969, 253.10051, -682.698669),
+                    CFrame.new(-599.430908, 253.334213, -684.232666),
+                    CFrame.new(-599.474121, 253.200363, -684.232666),
+                    CFrame.new(-599.479248, 253.061386, -684.232666),
+                    CFrame.new(-598.345337, 253.061386, -684.105713)
+                }
 
     local anyRobbed = false
     if KickDownDoor(HardDoorCFrame) then
@@ -138,6 +163,26 @@ function StartLoop()
         end
     end)
 end
+
+-- 🧠 UI Button
+local screenGui = Instance.new("ScreenGui", game.CoreGui)
+screenGui.Name = "SimpleFarmUI"
+
+local function createButton(text, posY, callback)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(0, 200, 0, 40)
+	btn.Position = UDim2.new(0, 20, 0, posY)
+	btn.Text = text
+	btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	btn.TextColor3 = Color3.new(1, 1, 1)
+	btn.Parent = screenGui
+	btn.MouseButton1Click:Connect(callback)
+end
+
+createButton("🏠 Start House Loop", 100, function()
+	print("[Button] Starting House loop")
+	StartLoop()
+end)
 
 -- 🧠 Resume after teleport
 spawn(function()
