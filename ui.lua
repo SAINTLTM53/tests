@@ -37,7 +37,7 @@ function ServerHop()
             repeat task.wait() until game:IsLoaded() and game:GetService("Players").LocalPlayer
             getgenv()._FarmAfterHop = "Studio"
             getgenv()._FromHop = true
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/main_studio_autofarm.lua"))()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/SAINTLTM53/tests/refs/heads/main/ui.lua"))()
         ]]
         queue_on_teleport(code)
         TeleportService:TeleportToPlaceInstance(PlaceId, servers[math.random(1, #servers)], LocalPlayer)
