@@ -11,11 +11,11 @@ if getgenv()._FromHop then
     _G.FarmAfterHop = getgenv()._FarmAfterHop
     _G.FromHop = true
 end
+
 _G.FarmAfterHop = _G.FarmAfterHop or nil
 _G.FromHop = _G.FromHop or false
-_G.IsLoopingFarm = false
 
-print("[Init] FarmAfterHop:", _G.FarmAfterHop)
+print("[Init] FarmAfterHop:", _G.FarmAfterHop, "| FromHop:", _G.FromHop)
 
 function ServerHop()
     print("[ServerHop] Attempting to hop...")
