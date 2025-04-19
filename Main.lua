@@ -1,4 +1,3 @@
--- ✅ Vanilla UI + All 3 Autofarms + Server Hop + Autoexec Compatible with Debugging
 repeat task.wait() until game:IsLoaded() and game:GetService("Players").LocalPlayer
 
 local Players = game:GetService("Players")
@@ -8,7 +7,6 @@ local LocalPlayer = Players.LocalPlayer
 
 print("[Script] Loaded")
 
--- 🧠 Persistent loop state
 if not _G.FarmAfterHop then _G.FarmAfterHop = nil end
 _G.IsLoopingFarm = false
 if getgenv()._FromHop then
@@ -19,7 +17,6 @@ _G.FarmAfterHop = _G.FarmAfterHop or nil
 _G.FromHop = _G.FromHop or false
 print("[Init] FarmAfterHop:", _G.FarmAfterHop)
 
--- 🖼️ Simple UI
 local screenGui = Instance.new("ScreenGui", game.CoreGui)
 screenGui.Name = "SimpleFarmUI"
 
@@ -34,7 +31,6 @@ local function createButton(name, yOffset, callback)
 	button.MouseButton1Click:Connect(callback)
 end
 
--- 🔁 Server Hop
 function ServerHop()
 	print("[ServerHop] Attempting to hop...")
 	local PlaceId = game.PlaceId
@@ -62,15 +58,12 @@ function ServerHop()
 		queue_on_teleport(code)
 		TeleportService:TeleportToPlaceInstance(PlaceId, servers[math.random(1, #servers)], LocalPlayer)
 
-		-- prevent further execution in current server
 		while true do task.wait() end
 	else
 		warn("[ServerHop] No available servers to hop to.")
 	end
 end
 
-
--- 🧱 Main Farm Logic
 local function runFarm(name)
 	print("[runFarm] Executing farm:", name)
 	if name == "Construction" then
@@ -145,7 +138,6 @@ local function runFarm(name)
 	end
 end
 
--- 🔁 Loop Trigger
 function StartLoop(farmName)
 	if _G.IsLoopingFarm then print("[Loop] Already running") return end
 	_G.IsLoopingFarm = true
@@ -165,7 +157,6 @@ function StartLoop(farmName)
 	end)
 end
 
--- 🔁 Resume if loop was running before hop
 spawn(function()
 	task.wait(5)
 	repeat task.wait() until game:IsLoaded() and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -178,16 +169,7 @@ spawn(function()
 	end
 end)
 
--- 🧠 Buttons
 createButton("🔨 Construction Loop", 0, function()
 	print("[Button] Starting Construction loop")
 	StartLoop("Construction")
-end)
-createButton("🏠 House Robbery Loop", 50, function()
-	print("[Button] Starting House loop")
-	StartLoop("House")
-end)
-createButton("🎬 Studio Farm Loop", 100, function()
-	print("[Button] Starting Studio loop")
-	StartLoop("Studio")
 end)
