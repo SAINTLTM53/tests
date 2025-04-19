@@ -1,4 +1,3 @@
--- 🏠 Full House Robbery Farm Script with Loop + Server Hop
 repeat task.wait() until game:IsLoaded() and game:GetService("Players").LocalPlayer
 
 local Players = game:GetService("Players")
@@ -6,7 +5,6 @@ local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
 local LocalPlayer = Players.LocalPlayer
 
--- Resume state after teleport
 if getgenv()._FromHop then
     _G.FarmAfterHop = getgenv()._FarmAfterHop
     _G.FromHop = true
@@ -150,7 +148,7 @@ function StartLoop()
     if _G.IsLoopingFarm then print("[Loop] Already running") return end
     _G.IsLoopingFarm = true
     _G.FarmAfterHop = "House"
-getgenv()._FromHop = nil  -- clear it on manual start
+getgenv()._FromHop = nil  
 _G.FromHop = false
 
 
@@ -167,7 +165,6 @@ _G.FromHop = false
     end)
 end
 
--- 🧠 UI Button
 local screenGui = Instance.new("ScreenGui", game.CoreGui)
 screenGui.Name = "SimpleFarmUI"
 
@@ -187,7 +184,6 @@ createButton("🏠 Start House Loop", 100, function()
 	StartLoop()
 end)
 
--- 🧠 Resume after teleport
 spawn(function()
     task.wait(5)
     repeat task.wait() until LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
