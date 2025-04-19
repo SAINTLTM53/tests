@@ -150,6 +150,9 @@ function StartLoop()
     if _G.IsLoopingFarm then print("[Loop] Already running") return end
     _G.IsLoopingFarm = true
     _G.FarmAfterHop = "House"
+getgenv()._FromHop = nil  -- clear it on manual start
+_G.FromHop = false
+
 
     task.spawn(function()
         while _G.IsLoopingFarm do
