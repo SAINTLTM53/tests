@@ -2,9 +2,8 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local LocalPlayer = Players.LocalPlayer
-local exoticRemote = ReplicatedStorage:WaitForChild("ExoticShopRemote")
 
-local selectedItem = nil
+local exoticRemote = ReplicatedStorage:WaitForChild("ExoticShopRemote")
 
 local exoticRemoteItems = {
     ["Lemonade($500)"] = "Lemonade",
@@ -27,36 +26,50 @@ local specialItemModels = {
     ["BagElite($500)"] = workspace.GUNS.BagElite,
 }
 
-local quickBuyItems = {}
-for name in pairs(exoticRemoteItems) do table.insert(quickBuyItems, name) end
-for name in pairs(specialItemModels) do table.insert(quickBuyItems, name) end
-
 local function cleanItemName(name)
     return (name:gsub("%s*%b()", ""))
 end
 
-local function teleportWithFreefall(position)
+local function teleportWithFreefall(pos)
     local char = LocalPlayer.Character
     local root = char and char:FindFirstChild("HumanoidRootPart")
     local humanoid = char and char:FindFirstChildOfClass("Humanoid")
-    if not char or not root or not humanoid then return end
+    if not root or not humanoid then return end
 
-    local prevState = humanoid:GetState()
+    local state = humanoid:GetState()
     humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
     root.Velocity = Vector3.zero
-    root.CFrame = CFrame.new(position + Vector3.new(0, 5, 0))
+    root.CFrame = CFrame.new(pos + Vector3.new(0, 5, 0))
     task.wait(0.15)
-    humanoid:ChangeState(prevState)
+    humanoid:ChangeState(state)
 end
 
-local function handleSpecialItemPurchase(displayName)
-    local model = specialItemModels[displayName]
-    local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-    if not model or not root then return false end
+getgenv().BuyItemFromQuickList = function(selectedItem)
+    if not selectedItem then
+        warn("❌ No item selected.")
+        return
+    end
 
-    local originalPos = root.Position
-    local cleanName = cleanItemName(displayName)
+    if exoticRemoteItems[selectedItem] then
+        local remoteName = exoticRemoteItems[selectedItem]
+        local ok, err = pcall(function()
+            return exoticRemote:InvokeServer(remoteName)
+        end)
+        if ok then
+            print("✅ Bought:", remoteName)
+        else
+            warn("❌ Remote failed:", err)
+        end
+        return
+    end
+
+    local model = specialItemModels[selectedItem]
+    local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not model or not root then return end
+
+    local cleanName = cleanItemName(selectedItem)
     local prompt = model:FindFirstChild("BuyPrompt", true)
+    local originalPos = root.Position
 
     teleportWithFreefall(model:GetModelCFrame().Position + Vector3.new(0, 3, -4))
     task.wait(0.35)
@@ -78,63 +91,17 @@ local function handleSpecialItemPurchase(displayName)
                 task.wait(0.05)
                 VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 1)
 
-                Library:Notify("✅ Bought & Equipped: " .. cleanName, 2)
+                print("✅ Equipped:", cleanName)
                 teleportWithFreefall(originalPos)
-                return true
+                return
             end
             task.wait(0.1)
         end
 
-        Library:Notify("❌ Failed to equip: " .. cleanName, 2)
+        warn("❌ Tool not equipped.")
     else
-        Library:Notify("❌ No BuyPrompt found for: " .. cleanName, 2)
+        warn("❌ No BuyPrompt for:", cleanName)
     end
 
     teleportWithFreefall(originalPos)
-    return false
 end
-
-local function buySelectedItem()
-    if not selectedItem then
-        Library:Notify("❌ No item selected.", 2)
-        return
-    end
-
-    if exoticRemoteItems[selectedItem] then
-        local remoteName = exoticRemoteItems[selectedItem]
-        local success, err = pcall(function()
-            return exoticRemote:InvokeServer(remoteName)
-        end)
-
-        if success then
-            Library:Notify("✅ Successfully bought: " .. remoteName, 2)
-        else
-            Library:Notify("❌ Remote buy failed: " .. tostring(err), 2)
-        end
-        return
-    end
-
-    if specialItemModels[selectedItem] then
-        local success = handleSpecialItemPurchase(selectedItem)
-        if not success then
-            Library:Notify("❌ Failed to buy or equip: " .. selectedItem, 2)
-        end
-    else
-        Library:Notify("❌ Invalid item selected: " .. selectedItem, 2)
-    end
-end
-
-QuickBuyBox:AddDropdown("Select Item", {
-    Values = quickBuyItems,
-    Default = "-",
-    Multi = false,
-    Text = "Choose Item",
-    Callback = function(val)
-        selectedItem = val
-        Library:Notify("🛒 Selected: " .. val, 2)
-    end
-})
-
-QuickBuyBox:AddButton("Buy Selected Item", function()
-    buySelectedItem()
-end)
