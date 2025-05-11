@@ -2,9 +2,8 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local LocalPlayer = Players.LocalPlayer
-local Library = Library or shared.Library
-
 local exoticRemote = ReplicatedStorage:WaitForChild("ExoticShopRemote")
+
 local selectedItem = nil
 
 local exoticRemoteItems = {
@@ -28,11 +27,9 @@ local specialItemModels = {
     ["BagElite($500)"] = workspace.GUNS.BagElite,
 }
 
-local quickBuyItems = {
-    "Lemonade($500)", "FakeCard($700)", "Ice-Fruit Bag($2500)", "Ice-Fruit Cupz($150)", "FijiWater($48)", "FreshWater($48)",
-    "Coffe($25)", "RedEliteBag($500)", "Red RCR Bag($2000)", "RCR Bag($2000)", "Drac Bag($700)", "DesignerBag($2000)",
-    "BlueEliteBag($500)", "Black RCR Bag($2000)", "BagElite($500)"
-}
+local quickBuyItems = {}
+for name in pairs(exoticRemoteItems) do table.insert(quickBuyItems, name) end
+for name in pairs(specialItemModels) do table.insert(quickBuyItems, name) end
 
 local function cleanItemName(name)
     return (name:gsub("%s*%b()", ""))
@@ -44,12 +41,12 @@ local function teleportWithFreefall(position)
     local humanoid = char and char:FindFirstChildOfClass("Humanoid")
     if not char or not root or not humanoid then return end
 
-    local state = humanoid:GetState()
+    local prevState = humanoid:GetState()
     humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
     root.Velocity = Vector3.zero
     root.CFrame = CFrame.new(position + Vector3.new(0, 5, 0))
     task.wait(0.15)
-    humanoid:ChangeState(state)
+    humanoid:ChangeState(prevState)
 end
 
 local function handleSpecialItemPurchase(displayName)
@@ -57,7 +54,7 @@ local function handleSpecialItemPurchase(displayName)
     local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
     if not model or not root then return false end
 
-    local originalPosition = root.Position
+    local originalPos = root.Position
     local cleanName = cleanItemName(displayName)
     local prompt = model:FindFirstChild("BuyPrompt", true)
 
@@ -82,7 +79,7 @@ local function handleSpecialItemPurchase(displayName)
                 VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 1)
 
                 Library:Notify("✅ Bought & Equipped: " .. cleanName, 2)
-                teleportWithFreefall(originalPosition)
+                teleportWithFreefall(originalPos)
                 return true
             end
             task.wait(0.1)
@@ -93,7 +90,7 @@ local function handleSpecialItemPurchase(displayName)
         Library:Notify("❌ No BuyPrompt found for: " .. cleanName, 2)
     end
 
-    teleportWithFreefall(originalPosition)
+    teleportWithFreefall(originalPos)
     return false
 end
 
@@ -127,8 +124,17 @@ local function buySelectedItem()
     end
 end
 
-return {
-    quickBuyItems = quickBuyItems,
-    selectedItem = selectedItem,
-    buySelectedItem = buySelectedItem
-}
+QuickBuyBox:AddDropdown("Select Item", {
+    Values = quickBuyItems,
+    Default = "-",
+    Multi = false,
+    Text = "Choose Item",
+    Callback = function(val)
+        selectedItem = val
+        Library:Notify("🛒 Selected: " .. val, 2)
+    end
+})
+
+QuickBuyBox:AddButton("Buy Selected Item", function()
+    buySelectedItem()
+end)
