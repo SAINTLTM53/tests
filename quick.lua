@@ -27,21 +27,7 @@ local specialItemModels = {
 }
 
 local function cleanItemName(name)
-    return (name:gsub("%s*%b()", ""))
-end
-
-local function teleportWithFreefall(pos)
-    local char = LocalPlayer.Character
-    local root = char and char:FindFirstChild("HumanoidRootPart")
-    local humanoid = char and char:FindFirstChildOfClass("Humanoid")
-    if not root or not humanoid then return end
-
-    local state = humanoid:GetState()
-    humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
-    root.Velocity = Vector3.zero
-    root.CFrame = CFrame.new(pos + Vector3.new(0, 5, 0))
-    task.wait(0.15)
-    humanoid:ChangeState(state)
+    return (name:gsub("%s*%b()", "")) 
 end
 
 getgenv().BuyItemFromQuickList = function(selectedItem)
@@ -71,7 +57,7 @@ getgenv().BuyItemFromQuickList = function(selectedItem)
     local prompt = model:FindFirstChild("BuyPrompt", true)
     local originalPos = root.Position
 
-    teleportWithFreefall(model:GetModelCFrame().Position + Vector3.new(0, 3, -4))
+    teleportTo(model:GetModelCFrame().Position + Vector3.new(0, 3, -4))
     task.wait(0.35)
 
     if prompt and prompt:IsA("ProximityPrompt") then
@@ -92,7 +78,8 @@ getgenv().BuyItemFromQuickList = function(selectedItem)
                 VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 1)
 
                 print("✅ Equipped:", cleanName)
-                teleportWithFreefall(originalPos)
+
+                teleportTo(originalPos)
                 return
             end
             task.wait(0.1)
@@ -103,5 +90,5 @@ getgenv().BuyItemFromQuickList = function(selectedItem)
         warn("❌ No BuyPrompt for:", cleanName)
     end
 
-    teleportWithFreefall(originalPos)
+    teleportTo(originalPos)
 end
