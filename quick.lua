@@ -57,7 +57,7 @@ getgenv().BuyItemFromQuickList = function(selectedItem)
     local prompt = model:FindFirstChild("BuyPrompt", true)
     local originalPos = root.Position
 
-    teleportTo(model:GetModelCFrame().Position + Vector3.new(0, 3, -4))
+    seatTeleportTo(CFrame.new(model:GetModelCFrame().Position + Vector3.new(0, 3, -4)))
     task.wait(0.35)
 
     if prompt and prompt:IsA("ProximityPrompt") then
@@ -79,7 +79,7 @@ getgenv().BuyItemFromQuickList = function(selectedItem)
 
                 print("✅ Equipped:", cleanName)
 
-                teleportTo(originalPos)
+                seatTeleportTo(CFrame.new(originalPos))
                 return
             end
             task.wait(0.1)
