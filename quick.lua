@@ -1,4 +1,4 @@
--- ✅ Updated BuyItemFromQuickList to support both teleport methods correctly with fallback and debug
+-- ✅ Updated BuyItemFromQuickList with fallback to _G.teleportMethod
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local VirtualInputManager = game:GetService("VirtualInputManager")
@@ -65,7 +65,7 @@ getgenv().BuyItemFromQuickList = function(selectedItem)
     end
 
     local targetCFrame = modelCFrame + Vector3.new(0, 3, -4)
-    local selectedMethod = Options.TeleportMethod and Options.TeleportMethod.Value or "Fastest tp method"
+    local selectedMethod = (Options and Options.TeleportMethod and Options.TeleportMethod.Value) or _G.teleportMethod or "Fastest tp method"
     print("🌐 Teleporting to item using method:", selectedMethod)
 
     if selectedMethod == "Fastest tp method" and _G.FastestTeleport then
