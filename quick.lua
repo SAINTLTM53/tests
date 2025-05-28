@@ -65,11 +65,12 @@ getgenv().BuyItemFromQuickList = function(selectedItem)
     end
 
     local targetCFrame = modelCFrame + Vector3.new(0, 3, -4)
-    print("🌐 Teleporting to item using method:", teleportMethod)
+    local selectedMethod = Options.TeleportMethod and Options.TeleportMethod.Value or "Fastest tp method"
+    print("🌐 Teleporting to item using method:", selectedMethod)
 
-    if teleportMethod == "Fastest tp method" and _G.FastestTeleport then
+    if selectedMethod == "Fastest tp method" and _G.FastestTeleport then
         _G.FastestTeleport(targetCFrame)
-    elseif teleportMethod == "Seat spoof method" and _G.SeatSpoofTeleport then
+    elseif selectedMethod == "Seat spoof method" and _G.SeatSpoofTeleport then
         _G.SeatSpoofTeleport(targetCFrame)
     else
         warn("❌ Teleport method not defined.")
@@ -98,9 +99,9 @@ getgenv().BuyItemFromQuickList = function(selectedItem)
 
                 print("✅ Equipped:", cleanName)
 
-                if teleportMethod == "Fastest tp method" then
+                if selectedMethod == "Fastest tp method" then
                     _G.FastestTeleport(CFrame.new(originalPos))
-                elseif teleportMethod == "Seat spoof method" then
+                elseif selectedMethod == "Seat spoof method" then
                     _G.SeatSpoofTeleport(CFrame.new(originalPos))
                 end
                 return
@@ -113,9 +114,9 @@ getgenv().BuyItemFromQuickList = function(selectedItem)
         warn("❌ No BuyPrompt for:", cleanName)
     end
 
-    if teleportMethod == "Fastest tp method" then
+    if selectedMethod == "Fastest tp method" then
         _G.FastestTeleport(CFrame.new(originalPos))
-    elseif teleportMethod == "Seat spoof method" then
+    elseif selectedMethod == "Seat spoof method" then
         _G.SeatSpoofTeleport(CFrame.new(originalPos))
     end
 end
