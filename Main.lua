@@ -1,5 +1,3 @@
--- Add inside your AutofarmBox group:
-
 AutofarmBox:AddToggle("LoopConstruction", {
     Text = "Loop Construction 🏗️",
     Default = false,
@@ -14,7 +12,6 @@ AutofarmBox:AddToggle("LoopConstruction", {
                 while _G.IsLoopingFarm and _G.FarmAfterHop == "Construction" do
                     print("[Loop] Running Construction...")
                     local success, err = pcall(function()
-                        -- Insert core construction logic here:
                         local wallCFrames = {
                             {"Wall1 Prompt", CFrame.new(-1672.1, 368.8, -1192.8)},
                             {"Wall1 Prompt2", CFrame.new(-1672.1, 368.8, -1180.0)},
@@ -107,7 +104,6 @@ AutofarmBox:AddToggle("LoopConstruction", {
                     Library:Notify("🌐 Server hopping...", 2)
                     task.wait(0.5)
 
-                    -- Server hop
                     local servers = {}
                     local req = syn and syn.request or http_request or request
                     local res = req({
