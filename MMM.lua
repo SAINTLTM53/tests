@@ -1,16 +1,11 @@
--- logic.lua
-
--- services
 local Players    = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
--- state
 getgenv().headSize      = 1
 getgenv().hitboxEnabled = false
 local connections      = {}
 local renderConnection
 
--- apply & reset
 local function applyHitbox(player)
     if player == Players.LocalPlayer then return end
     local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
@@ -34,7 +29,6 @@ local function resetHitbox(player)
     end
 end
 
--- loops
 local function startHitboxLoop()
     if renderConnection then return end
     renderConnection = RunService.RenderStepped:Connect(function()
@@ -65,7 +59,6 @@ local function stopHitboxLoop()
     connections = {}
 end
 
--- expose API
 getgenv().startHitboxLoop = startHitboxLoop
 getgenv().stopHitboxLoop  = stopHitboxLoop
 getgenv().setHeadSize     = function(sz) getgenv().headSize = sz end
