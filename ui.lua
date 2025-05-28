@@ -40,7 +40,6 @@ AutofarmBox:AddToggle("LoopStudio", {
                     Library:Notify("🔁 Hopping Server...", 2)
                     task.wait(0.5)
 
-                    -- ServerHop
                     local servers = {}
                     local req = syn and syn.request or http_request or request
                     local res = req({
