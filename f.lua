@@ -12,4 +12,4 @@ for _, Server in ipairs (ServerList) do
     end
 end
 
-print("No server found.") -- press F9 to open roblox developer console. you can find this message there (if needed)
+print("No server found.")
