@@ -1,4 +1,4 @@
--- ✅ Updated BuyItemFromQuickList to support both teleport methods correctly
+-- ✅ Updated BuyItemFromQuickList to support both teleport methods correctly with fallback and debug
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local VirtualInputManager = game:GetService("VirtualInputManager")
@@ -59,12 +59,23 @@ getgenv().BuyItemFromQuickList = function(selectedItem)
     local originalPos = root.Position
 
     local modelCFrame = model:GetPivot()
-
-    if teleportMethod == "Fastest tp method" then
-        _G.FastestTeleport(modelCFrame + Vector3.new(0, 3, -4))
-    elseif teleportMethod == "Seat spoof method" then
-        _G.SeatSpoofTeleport(modelCFrame + Vector3.new(0, 3, -4))
+    if not modelCFrame then
+        warn("❌ Could not get model CFrame.")
+        return
     end
+
+    local targetCFrame = modelCFrame + Vector3.new(0, 3, -4)
+    print("🌐 Teleporting to item using method:", teleportMethod)
+
+    if teleportMethod == "Fastest tp method" and _G.FastestTeleport then
+        _G.FastestTeleport(targetCFrame)
+    elseif teleportMethod == "Seat spoof method" and _G.SeatSpoofTeleport then
+        _G.SeatSpoofTeleport(targetCFrame)
+    else
+        warn("❌ Teleport method not defined.")
+        return
+    end
+
     task.wait(0.75)
 
     if prompt and prompt:IsA("ProximityPrompt") then
@@ -72,6 +83,7 @@ getgenv().BuyItemFromQuickList = function(selectedItem)
         task.wait(0.5)
 
         local timeout = tick() + 3
+        print("🔍 Waiting for tool:", cleanName)
         while tick() < timeout do
             local tool = LocalPlayer.Backpack:FindFirstChild(cleanName) or LocalPlayer.Character:FindFirstChild(cleanName)
             if tool and tool:IsA("Tool") then
