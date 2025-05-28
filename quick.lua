@@ -1,3 +1,4 @@
+-- Updated BuyItemFromQuickList to support both teleport methods
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local VirtualInputManager = game:GetService("VirtualInputManager")
@@ -57,7 +58,11 @@ getgenv().BuyItemFromQuickList = function(selectedItem)
     local prompt = model:FindFirstChild("BuyPrompt", true)
     local originalPos = root.Position
 
-    seatTeleportTo(CFrame.new(model:GetModelCFrame().Position + Vector3.new(0, 3, -4)))
+    if teleportMethod == "Fastest tp method" then
+        _G.FastestTeleport(CFrame.new(model:GetModelCFrame().Position + Vector3.new(0, 3, -4)))
+    elseif teleportMethod == "Seat spoof method" then
+        _G.SeatSpoofTeleport(CFrame.new(model:GetModelCFrame().Position + Vector3.new(0, 3, -4)))
+    end
     task.wait(0.35)
 
     if prompt and prompt:IsA("ProximityPrompt") then
@@ -79,7 +84,11 @@ getgenv().BuyItemFromQuickList = function(selectedItem)
 
                 print("✅ Equipped:", cleanName)
 
-                seatTeleportTo(CFrame.new(originalPos))
+                if teleportMethod == "Fastest tp method" then
+                    _G.FastestTeleport(CFrame.new(originalPos))
+                elseif teleportMethod == "Seat spoof method" then
+                    _G.SeatSpoofTeleport(CFrame.new(originalPos))
+                end
                 return
             end
             task.wait(0.1)
@@ -89,6 +98,4 @@ getgenv().BuyItemFromQuickList = function(selectedItem)
     else
         warn("❌ No BuyPrompt for:", cleanName)
     end
-
-    teleportTo(originalPos)
 end
