@@ -1,4 +1,3 @@
--- ✅ Updated BuyItemFromQuickList with fallback to _G.teleportMethod
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local VirtualInputManager = game:GetService("VirtualInputManager")
