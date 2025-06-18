@@ -66,7 +66,7 @@ elseif Version <= 10 then
 		local args = { [1] = "RewardMoneyIfIsInGroup" }
 
 		remote:FireServer(unpack(args))
-		task.wait(0.05)
+		task.wait(0.01)
 
 		for i = 1, 9999 do
 			remote:FireServer(unpack(args))
