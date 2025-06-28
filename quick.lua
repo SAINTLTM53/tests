@@ -1,3 +1,31 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local LocalPlayer = Players.LocalPlayer
+
+local exoticRemote = ReplicatedStorage:WaitForChild("ExoticShopRemote")
+
+local exoticRemoteItems = {
+    ["Lemonade($500)"] = "Lemonade",
+    ["FakeCard($700)"] = "FakeCard",
+    ["Ice-Fruit Bag($2500)"] = "Ice-Fruit Bag",
+    ["Ice-Fruit Cupz($150)"] = "Ice-Fruit Cupz",
+    ["FijiWater($48)"] = "FijiWater",
+    ["FreshWater($48)"] = "FreshWater"
+}
+
+local specialItemModels = {
+    ["Coffe($25)"] = workspace.GUNS.Coffe,
+    ["RedEliteBag($500)"] = workspace.GUNS.RedEliteBag,
+    ["Red RCR Bag($2000)"] = workspace.GUNS["Red RCR Bag"],
+    ["RCR Bag($2000)"] = workspace.GUNS["RCR Bag"],
+    ["Drac Bag($700)"] = workspace.GUNS["Drac Bag"],
+    ["DesignerBag($2000)"] = workspace.GUNS.DesignerBag,
+    ["BlueEliteBag($500)"] = workspace.GUNS.BlueEliteBag,
+    ["Black RCR Bag($2000)"] = workspace.GUNS["Black RCR Bag"],
+    ["BagElite($500)"] = workspace.GUNS.BagElite
+}
+
 getgenv().BuyItemFromQuickList = function(selectedItem)
     if not selectedItem then
         return
