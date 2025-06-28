@@ -122,8 +122,7 @@ table.sort(buyOptions)
 
 local selectedItem = buyOptions[1]
 
-local QuickGroup = Tabs.Main:AddRightGroupbox("Exotic Shop")
-QuickGroup:AddDropdown("QuickBuyDropdown", {
+Tele:AddDropdown("QuickBuyDropdown", {
     Values = buyOptions,
     Default = buyOptions[1],
     Multi = false,
@@ -133,7 +132,7 @@ QuickGroup:AddDropdown("QuickBuyDropdown", {
     selectedItem = value
 end)
 
-QuickGroup:AddButton("Buy Selected Item", function()
+Tele:AddButton("Buy Selected Item", function()
     local success, err = pcall(function()
         BuyItemFromQuickList(selectedItem)
     end)
