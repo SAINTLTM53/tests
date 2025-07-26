@@ -4,6 +4,7 @@ local RunService = game:GetService("RunService")
 getgenv().headSize = 1
 getgenv().hitboxEnabled = false
 
+local adornments = {}
 local connections = {}
 local renderConnection
 
@@ -13,29 +14,35 @@ local function isValidCharacter(player)
        and player.Character:FindFirstChild("HumanoidRootPart")
 end
 
-local function applyHitbox(player)
+local function applyAdornment(player)
     if player == Players.LocalPlayer or not isValidCharacter(player) then return end
 
     local hrp = player.Character:FindFirstChild("HumanoidRootPart")
-    if hrp then
-        hrp.Size = Vector3.new(getgenv().headSize, getgenv().headSize, getgenv().headSize)
-        hrp.Transparency = 0.8
-        hrp.BrickColor = BrickColor.new("Bright blue")
-        hrp.Material = Enum.Material.Neon
-        hrp.CanCollide = false
+    if not hrp then return end
+
+    if adornments[player] then
+        adornments[player].Size = Vector3.new(getgenv().headSize, getgenv().headSize, getgenv().headSize)
+        adornments[player].Adornee = hrp
+        return
     end
+
+    local box = Instance.new("BoxHandleAdornment")
+    box.Adornee = hrp
+    box.Size = Vector3.new(getgenv().headSize, getgenv().headSize, getgenv().headSize)
+    box.AlwaysOnTop = true
+    box.ZIndex = 5
+    box.Transparency = 0.2
+    box.Color3 = Color3.fromRGB(0, 170, 255)
+    box.Name = "HitboxAdornment"
+    box.Parent = game:GetService("CoreGui")
+
+    adornments[player] = box
 end
 
-local function resetHitbox(player)
-    if not isValidCharacter(player) then return end
-
-    local hrp = player.Character:FindFirstChild("HumanoidRootPart")
-    if hrp then
-        hrp.Size = Vector3.new(2, 2, 1)
-        hrp.Transparency = 1
-        hrp.BrickColor = BrickColor.new("Medium stone grey")
-        hrp.Material = Enum.Material.Plastic
-        hrp.CanCollide = true
+local function removeAdornment(player)
+    if adornments[player] then
+        adornments[player]:Destroy()
+        adornments[player] = nil
     end
 end
 
@@ -45,14 +52,14 @@ local function startHitboxLoop()
     renderConnection = RunService.RenderStepped:Connect(function()
         if not getgenv().hitboxEnabled then return end
         for _, player in ipairs(Players:GetPlayers()) do
-            pcall(applyHitbox, player)
+            pcall(applyAdornment, player)
         end
     end)
 
     table.insert(connections, Players.PlayerAdded:Connect(function(plr)
         table.insert(connections, plr.CharacterAdded:Connect(function()
             task.wait(1)
-            pcall(applyHitbox, plr)
+            pcall(applyAdornment, plr)
         end))
     end))
 end
@@ -64,7 +71,7 @@ local function stopHitboxLoop()
     end
 
     for _, player in ipairs(Players:GetPlayers()) do
-        pcall(resetHitbox, player)
+        pcall(removeAdornment, player)
     end
 
     for _, conn in ipairs(connections) do
