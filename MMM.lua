@@ -9,79 +9,92 @@ local connections = {}
 local renderConnection
 
 local function isValidCharacter(player)
-    return player and player.Character
-       and player.Character:FindFirstChild("Humanoid")
-       and player.Character:FindFirstChild("HumanoidRootPart")
+	local char = player.Character
+	return char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart")
 end
 
 local function applyAdornment(player)
-    if player == Players.LocalPlayer or not isValidCharacter(player) then return end
+	if player == Players.LocalPlayer or not isValidCharacter(player) then return end
 
-    local hrp = player.Character:FindFirstChild("HumanoidRootPart")
-    if not hrp then return end
+	local hrp = player.Character.HumanoidRootPart
+	local adorn = adornments[player]
 
-    if adornments[player] then
-        adornments[player].Size = Vector3.new(getgenv().headSize, getgenv().headSize, getgenv().headSize)
-        adornments[player].Adornee = hrp
-        return
-    end
+	if adorn then
+		adorn.Size = Vector3.new(getgenv().headSize, getgenv().headSize, getgenv().headSize)
+		adorn.Adornee = hrp
+	else
+		local box = Instance.new("BoxHandleAdornment")
+		box.Name = "HitboxAdornment"
+		box.Adornee = hrp
+		box.Size = Vector3.new(getgenv().headSize, getgenv().headSize, getgenv().headSize)
+		box.AlwaysOnTop = true
+		box.ZIndex = 5
+		box.Transparency = 0.2
+		box.Color3 = Color3.fromRGB(0, 170, 255)
+		box.Parent = hrp 
 
-    local box = Instance.new("BoxHandleAdornment")
-    box.Adornee = hrp
-    box.Size = Vector3.new(getgenv().headSize, getgenv().headSize, getgenv().headSize)
-    box.AlwaysOnTop = true
-    box.ZIndex = 5
-    box.Transparency = 0.2
-    box.Color3 = Color3.fromRGB(0, 170, 255)
-    box.Name = "HitboxAdornment"
-    box.Parent = game:GetService("CoreGui")
-
-    adornments[player] = box
+		adornments[player] = box
+	end
 end
 
 local function removeAdornment(player)
-    if adornments[player] then
-        adornments[player]:Destroy()
-        adornments[player] = nil
-    end
+	if adornments[player] then
+		adornments[player]:Destroy()
+		adornments[player] = nil
+	end
 end
 
 local function startHitboxLoop()
-    if renderConnection then return end
+	if renderConnection then return end
+	renderConnection = RunService.RenderStepped:Connect(function()
+		if not getgenv().hitboxEnabled then return end
+		for _, player in ipairs(Players:GetPlayers()) do
+			applyAdornment(player)
+		end
+	end)
 
-    renderConnection = RunService.RenderStepped:Connect(function()
-        if not getgenv().hitboxEnabled then return end
-        for _, player in ipairs(Players:GetPlayers()) do
-            pcall(applyAdornment, player)
-        end
-    end)
+	table.insert(connections, Players.PlayerAdded:Connect(function(plr)
+		table.insert(connections, plr.CharacterAdded:Connect(function()
+			task.wait(1)
+			applyAdornment(plr)
+		end))
+	end))
 
-    table.insert(connections, Players.PlayerAdded:Connect(function(plr)
-        table.insert(connections, plr.CharacterAdded:Connect(function()
-            task.wait(1)
-            pcall(applyAdornment, plr)
-        end))
-    end))
+	for _, plr in ipairs(Players:GetPlayers()) do
+		if plr ~= Players.LocalPlayer then
+			table.insert(connections, plr.CharacterAdded:Connect(function()
+				task.wait(1)
+				applyAdornment(plr)
+			end))
+		end
+	end
 end
 
 local function stopHitboxLoop()
-    if renderConnection then
-        renderConnection:Disconnect()
-        renderConnection = nil
-    end
+	if renderConnection then
+		renderConnection:Disconnect()
+		renderConnection = nil
+	end
 
-    for _, player in ipairs(Players:GetPlayers()) do
-        pcall(removeAdornment, player)
-    end
+	for _, conn in ipairs(connections) do
+		conn:Disconnect()
+	end
+	connections = {}
 
-    for _, conn in ipairs(connections) do
-        conn:Disconnect()
-    end
-    connections = {}
+	for _, player in pairs(adornments) do
+		player:Destroy()
+	end
+	adornments = {}
+end
+
+getgenv().setHeadSize = function(size)
+	getgenv().headSize = size
+	for player, adorn in pairs(adornments) do
+		if adorn and adorn:IsA("BoxHandleAdornment") then
+			adorn.Size = Vector3.new(size, size, size)
+		end
+	end
 end
 
 getgenv().startHitboxLoop = startHitboxLoop
 getgenv().stopHitboxLoop = stopHitboxLoop
-getgenv().setHeadSize = function(sz)
-    getgenv().headSize = sz
-end
