@@ -6,6 +6,7 @@ local LocalPlayer = Players.LocalPlayer
 local exoticRemote = ReplicatedStorage:WaitForChild("ExoticShopRemote")
 
 local exoticRemoteItems = {
+    ["Bandage($350)"] = "Bandage",
     ["Lemonade($500)"] = "Lemonade",
     ["FakeCard($700)"] = "FakeCard",
     ["Ice-Fruit Bag($2500)"] = "Ice-Fruit Bag",
@@ -33,7 +34,6 @@ end
 getgenv().BuyItemFromQuickList = function(selectedItem)
     if not selectedItem then return end
 
-    -- Remote Buy
     if exoticRemoteItems[selectedItem] then
         local remoteName = exoticRemoteItems[selectedItem]
         local ok, err = pcall(function()
@@ -42,7 +42,6 @@ getgenv().BuyItemFromQuickList = function(selectedItem)
         return
     end
 
-    -- ProximityPrompt Buy
     local model = specialItemModels[selectedItem]
     local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
     if not model or not root then return end
