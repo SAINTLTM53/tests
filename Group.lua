@@ -1,4 +1,3 @@
--- OutfitUI.lua (put this on GitHub)
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Tabs = shared.Tabs or getgenv().Tabs
 local Library = shared.Library or getgenv().Library
