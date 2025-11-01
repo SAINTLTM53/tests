@@ -124,7 +124,7 @@ getgenv().SilentAimAPI = {
 		getgenv().SilentAimConfig.FOV = state
 		if state then
 			circleConnection = RunService.Heartbeat:Connect(function()
-				fovCircle.Position = Vector2.new(Mouse.X, Mouse.Y + 100)
+				fovCircle.Position = Vector2.new(Mouse.X, Mouse.Y + 60)
 				fovCircle.Radius = getgenv().SilentAimConfig.FOVRadius
 				fovCircle.Visible = true
 			end)
