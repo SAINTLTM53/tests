@@ -1,4 +1,3 @@
--- SilentAim.lua
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
@@ -10,7 +9,6 @@ local Mouse = LocalPlayer:GetMouse()
 local InflictRemote = ReplicatedStorage:WaitForChild("InflictTarget")
 local FireEvent = LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("BulletVisualizerServerScript"):WaitForChild("VisualizeM")
 
--- // CONFIG //
 local TargetPart = "Head"
 local Damage = 1000
 local FOV_RADIUS = 150
@@ -35,7 +33,6 @@ getgenv().SilentAimConfig = {
 	FOVRadius = 150
 }
 
--- // FUNCTIONS //
 local function isVisible(targetPos, targetCharacter)
 	if not getgenv().SilentAimConfig.VisibleCheck then return true end
 	local rayOrigin = Camera.CFrame.Position
@@ -97,8 +94,6 @@ local function sendDamage(target)
 		true
 	)
 end
-
--- // MAIN API //
 getgenv().SilentAimAPI = {
 	Start = function()
 		if getgenv().SilentAimConfig.Enabled then return end
@@ -129,7 +124,7 @@ getgenv().SilentAimAPI = {
 		getgenv().SilentAimConfig.FOV = state
 		if state then
 			circleConnection = RunService.Heartbeat:Connect(function()
-				fovCircle.Position = Vector2.new(Mouse.X, Mouse.Y)
+				fovCircle.Position = Vector2.new(Mouse.X, Mouse.Y + 100)
 				fovCircle.Radius = getgenv().SilentAimConfig.FOVRadius
 				fovCircle.Visible = true
 			end)
