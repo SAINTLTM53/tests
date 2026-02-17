@@ -58,32 +58,30 @@ if not prompt then return end
 local modelCFrame = model:GetPivot()
 if not modelCFrame then return end
 
-local offset = CFrame.new(0, 4, -6) -- higher + further back
-local targetCFrame = modelCFrame * offset
+local originalCFrame = root.CFrame
+
+local lookVector = modelCFrame.LookVector
+local safePosition = modelCFrame.Position - (lookVector * 6) + Vector3.new(0, 2.5, 0)
+
+local targetCFrame = CFrame.lookAt(safePosition, modelCFrame.Position)
 
 local oldPlatformStand = humanoid.PlatformStand
 local oldAutoRotate = humanoid.AutoRotate
 
 humanoid.PlatformStand = true
 humanoid.AutoRotate = false
-
 root.AssemblyLinearVelocity = Vector3.zero
 root.AssemblyAngularVelocity = Vector3.zero
 
-if _G.teleportTo then
-    _G.teleportTo(targetCFrame)
-else
-    root.CFrame = targetCFrame
-end
+root.CFrame = targetCFrame
 
-task.wait(0.15)
+task.wait(0.2)
 
 root.AssemblyLinearVelocity = Vector3.zero
 root.AssemblyAngularVelocity = Vector3.zero
 
 humanoid.PlatformStand = oldPlatformStand
 humanoid.AutoRotate = oldAutoRotate
-
     task.wait(0.75)
 
     prompt.HoldDuration = 0
@@ -108,7 +106,15 @@ humanoid.AutoRotate = oldAutoRotate
         task.wait(0.1)
     end
 
-    if _G.teleportTo then
-        _G.teleportTo(CFrame.new(originalPos))
-    end
+humanoid.PlatformStand = true
+root.AssemblyLinearVelocity = Vector3.zero
+root.AssemblyAngularVelocity = Vector3.zero
+
+root.CFrame = originalCFrame
+
+task.wait(0.15)
+
+root.AssemblyLinearVelocity = Vector3.zero
+root.AssemblyAngularVelocity = Vector3.zero
+humanoid.PlatformStand = false
 end
