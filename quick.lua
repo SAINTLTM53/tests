@@ -44,22 +44,45 @@ getgenv().BuyItemFromQuickList = function(selectedItem)
         return
     end
 
-    local model = specialItemModels[selectedItem]
-    local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-    if not model or not root then return end
+local model = specialItemModels[selectedItem]
+local character = LocalPlayer.Character
+local root = character and character:FindFirstChild("HumanoidRootPart")
+local humanoid = character and character:FindFirstChildOfClass("Humanoid")
 
-    local cleanName = cleanItemName(selectedItem)
-    local prompt = model:FindFirstChild("BuyPrompt", true)
-    if not prompt then return end
+if not model or not root or not humanoid then return end
 
-    local originalPos = root.Position
-    local modelCFrame = model:GetPivot()
-    if not modelCFrame then return end
+local cleanName = cleanItemName(selectedItem)
+local prompt = model:FindFirstChild("BuyPrompt", true)
+if not prompt then return end
 
-    local targetCFrame = modelCFrame + Vector3.new(0, 3, -4)
-    if _G.teleportTo then
-        _G.teleportTo(targetCFrame)
-    end
+local modelCFrame = model:GetPivot()
+if not modelCFrame then return end
+
+local offset = CFrame.new(0, 4, -6) -- higher + further back
+local targetCFrame = modelCFrame * offset
+
+local oldPlatformStand = humanoid.PlatformStand
+local oldAutoRotate = humanoid.AutoRotate
+
+humanoid.PlatformStand = true
+humanoid.AutoRotate = false
+
+root.AssemblyLinearVelocity = Vector3.zero
+root.AssemblyAngularVelocity = Vector3.zero
+
+if _G.teleportTo then
+    _G.teleportTo(targetCFrame)
+else
+    root.CFrame = targetCFrame
+end
+
+task.wait(0.15)
+
+root.AssemblyLinearVelocity = Vector3.zero
+root.AssemblyAngularVelocity = Vector3.zero
+
+humanoid.PlatformStand = oldPlatformStand
+humanoid.AutoRotate = oldAutoRotate
 
     task.wait(0.75)
 
